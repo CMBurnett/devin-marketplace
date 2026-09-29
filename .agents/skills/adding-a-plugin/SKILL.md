@@ -53,7 +53,7 @@ the plugin from your checkout and have a session call one of its tools.
   of: **Add plugin → Upload .zip** with a zip of `plugins/<slug>`; **Add
   plugin → From repository** with your fork and subdirectory `plugins/<slug>`
   (installs the fork's default branch); or a session on your branch where you
-  ask Devin to install `plugins/<slug>` as a personal plugin (it uploads the
+  ask Devin to install your plugin as a personal plugin (it uploads the
   directory, you approve). Then connect the MCP from the plugin's card
   (credential or OAuth grant), start a new session and call a tool. The
   server's host has to be reachable under your session network policy.
