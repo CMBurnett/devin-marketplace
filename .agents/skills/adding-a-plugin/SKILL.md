@@ -54,9 +54,10 @@ the plugin from your checkout and have a session call one of its tools.
   plugin → From repository** with your fork and subdirectory `plugins/<slug>`
   (installs the fork's default branch); or a session on your branch where you
   ask Devin to install your plugin as a personal plugin (it uploads the
-  directory, you approve). If the MCP needs a credential or authorization,
-  the plugin shows a Connect button; connect it, then start a new session and
-  call a tool.
+  directory, you approve). Then start a new session and have Devin call a
+  tool: an MCP that needs OAuth prompts you to authorize it in chat; one that
+  needs a `${<NAME>}` credential has to be connected first from the plugin's
+  Connect button in Customize.
 
 ## Both
 
