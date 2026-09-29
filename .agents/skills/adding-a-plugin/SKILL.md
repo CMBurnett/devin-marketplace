@@ -54,10 +54,9 @@ the plugin from your checkout and have a session call one of its tools.
   plugin → From repository** with your fork and subdirectory `plugins/<slug>`
   (installs the fork's default branch); or a session on your branch where you
   ask Devin to install your plugin as a personal plugin (it uploads the
-  directory, you approve). Then connect the MCP from the plugin's card
-  (credential or OAuth grant), start a new session and call a tool. The
-  server's host has to be reachable under your session network policy.
-  Uninstall the test plugin afterwards.
+  directory, you approve). If the MCP needs a credential or authorization,
+  the plugin shows a Connect button; connect it, then start a new session and
+  call a tool.
 
 ## Both
 
