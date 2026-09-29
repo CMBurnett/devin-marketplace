@@ -83,7 +83,7 @@
     "./plugins/contentsquare",
     "./plugins/context7",
     "./plugins/coralogix",
-    "./plugins/coralogix-remote",
+    "./plugins/coralogix-api-key",
     "./plugins/corridor",
     "./plugins/cortex",
     "./plugins/craft",
