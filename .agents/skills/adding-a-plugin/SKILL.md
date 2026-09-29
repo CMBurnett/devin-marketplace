@@ -41,6 +41,23 @@ this and CI runs it.
    host the same integration ourselves, author it under `plugins/` instead of
    pointing upstream.
 
+## Testing your plugin
+
+`validate.py` only checks the manifest's shape; before opening a PR, install
+the plugin from your checkout and have a session call one of its tools.
+
+* Locally: `devin plugins install --local ./plugins/<slug>` (path installs are
+  linked, so edits apply on the next session), export any `${<NAME>}`
+  credential the server needs, then start `devin` and use it.
+* In Devin Cloud, either push to a fork and install it from **Customize →
+  Plugins → Add plugin → From repository** (`<you>/devin-marketplace`,
+  subdirectory `plugins/<slug>`; it installs the fork's default branch), or
+  start a session on your branch and ask Devin to install `plugins/<slug>` as
+  a personal plugin — it uploads the directory and you approve. Then connect
+  the MCP from the plugin's card in Customize (credential or OAuth grant),
+  start a new session and call a tool. The server's host has to be reachable
+  under your session network policy. Uninstall the test plugin afterwards.
+
 ## Both
 
 1. Run `python3 scripts/validate.py --fix` to sort and format the manifest,
