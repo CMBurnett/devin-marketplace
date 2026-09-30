@@ -200,7 +200,9 @@ def check_user_config(where: str, config: dict, items: object, errors: list[str]
         if name in seen:
             errors.append(f"{at}: key '{key}' is declared twice")
         seen.add(name)
-        if name not in referenced:
+        if name in RUNTIME_PLACEHOLDERS:
+            errors.append(f"{at}: key '{key}' names a runtime-provided placeholder, not a user setting")
+        elif name not in referenced:
             errors.append(f"{at}: key '{key}' names ${{{name}}}, which the server config never references")
         for field in ("title", "description"):
             if field in item and not isinstance(item[field], str):
