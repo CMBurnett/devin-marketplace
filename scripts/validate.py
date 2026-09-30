@@ -25,7 +25,7 @@ URL_RE = re.compile(r"^https://[^\s/]+/[^\s]+\.git$")
 LOCAL_RE = re.compile(r"^\./plugins/([a-z0-9]+([.-][a-z0-9]+)*)$")
 PLACEHOLDER_RE = re.compile(r"\$\{([^}]*)\}")
 CREDENTIAL_NAME_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
-RUNTIME_PLACEHOLDERS = {"CLAUDE_PLUGIN_ROOT", "PLUGIN_ROOT"}
+RUNTIME_PLACEHOLDERS = {"CLAUDE_PLUGIN_ROOT", "DEVIN_PLUGIN_ROOT", "PLUGIN_DATA", "PLUGIN_ROOT"}
 LOGO_RE = re.compile(r"^[A-Za-z0-9_-]+(/[A-Za-z0-9_-]+)*\.(svg|png|jpg|jpeg|webp)$")
 TOP_LEVEL_KEYS = {"name", "description", "homepage", "repository", "skills", "optionalPlugins"}
 UPSTREAM_KEYS = {"source", "url", "path", "sha"}
@@ -161,7 +161,7 @@ def placeholder_names(values: list[object]) -> set[str]:
         for value in values
         if isinstance(value, str)
         for reference in PLACEHOLDER_RE.findall(value)
-    }
+    } - RUNTIME_PLACEHOLDERS
 
 
 def check_user_config(where: str, values: list[object], header_values: list[object], items: object, errors: list[str]) -> None:
@@ -187,9 +187,7 @@ def check_user_config(where: str, values: list[object], header_values: list[obje
         if name in seen:
             errors.append(f"{at}: key '{key}' is declared twice")
         seen.add(name)
-        if name in RUNTIME_PLACEHOLDERS:
-            errors.append(f"{at}: key '{key}' names a runtime-provided placeholder, not a user setting")
-        elif name not in referenced:
+        if name not in referenced:
             errors.append(f"{at}: key '{key}' names ${{{name}}}, which the server config never references")
         for field in ("title", "description"):
             if field in item and not isinstance(item[field], str):
