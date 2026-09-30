@@ -114,10 +114,11 @@ def check_env_placeholders(where: str, env: dict[str, object], errors: list[str]
                 errors.append(f"{where}: env {key} references ${{{name}}}; a saved credential is matched by the env key, so it must be ${{{key}}}")
 
 
-def check_server(where: str, slug: str, config: object, errors: list[str]) -> None:
+def check_server(where: str, slug: str, config: object, errors: list[str]) -> tuple[list[object], list[object]] | None:
+    """Check one server config; return its scanned values and header values, or None if malformed."""
     if not isinstance(config, dict):
         errors.append(f"{where}: server '{slug}' must be an object")
-        return
+        return None
     stdio = "command" in config
     allowed = STDIO_KEYS if stdio else HTTP_KEYS
     extra = set(config) - allowed - {"description"}
@@ -128,10 +129,11 @@ def check_server(where: str, slug: str, config: object, errors: list[str]) -> No
         env = config.get("env", {})
         if not isinstance(args, list):
             errors.append(f"{where}: server '{slug}' args must be a list")
-            return
+            return None
         if not isinstance(env, dict):
             errors.append(f"{where}: server '{slug}' env must be an object")
-            return
+            return None
+        header_values: list[object] = []
         strings = [config["command"], *args, *env.values()]
         check_env_placeholders(f"{where} ({slug})", env, errors)
     else:
@@ -139,50 +141,35 @@ def check_server(where: str, slug: str, config: object, errors: list[str]) -> No
         headers = config.get("headers", {})
         if not isinstance(url, str) or not url.startswith("https://"):
             errors.append(f"{where}: server '{slug}' needs an https url or a command")
-            return
+            return None
         if not isinstance(headers, dict):
             errors.append(f"{where}: server '{slug}' headers must be an object")
-            return
-        strings = [url, *headers.values()]
+            return None
+        header_values = list(headers.values())
+        strings = [url, *header_values]
     for value in strings:
         if not isinstance(value, str):
             errors.append(f"{where}: server '{slug}' has a non-string value")
             continue
         check_placeholders(f"{where} ({slug})", value, errors)
+    return strings, header_values
 
 
-def referenced_names(config: dict) -> tuple[set[str], set[str]]:
-    """Placeholder names the server config references, and those referenced from a header."""
-    args = config.get("args")
-    env = config.get("env")
-    header_map = config.get("headers")
-    if "command" in config:
-        headers: list[object] = []
-        values = [
-            config["command"],
-            *(args if isinstance(args, list) else []),
-            *(env.values() if isinstance(env, dict) else []),
-        ]
-    else:
-        headers = list(header_map.values()) if isinstance(header_map, dict) else []
-        values = [config.get("url"), *headers]
-
-    def names(strings: list[object]) -> set[str]:
-        return {
-            placeholder_name(reference)
-            for value in strings
-            if isinstance(value, str)
-            for reference in PLACEHOLDER_RE.findall(value)
-        }
-
-    return names(values), names(headers)
+def placeholder_names(values: list[object]) -> set[str]:
+    return {
+        placeholder_name(reference)
+        for value in values
+        if isinstance(value, str)
+        for reference in PLACEHOLDER_RE.findall(value)
+    }
 
 
-def check_user_config(where: str, config: dict, items: object, errors: list[str]) -> None:
+def check_user_config(where: str, values: list[object], header_values: list[object], items: object, errors: list[str]) -> None:
     if not isinstance(items, list):
         errors.append(f"{where}: userConfig must be a list")
         return
-    referenced, from_headers = referenced_names(config)
+    referenced = placeholder_names(values)
+    from_headers = placeholder_names(header_values)
     seen: set[str] = set()
     for index, item in enumerate(items):
         at = f"{where}: userConfig[{index}]"
@@ -256,9 +243,9 @@ def check_local_plugin(slug: str, errors: list[str]) -> None:
     if not isinstance(servers, dict) or len(servers) != 1 or slug not in servers:
         errors.append(f"{where}: mcpServers must declare exactly one server named '{slug}'")
         return
-    check_server(where, slug, servers[slug], errors)
-    if "userConfig" in data and isinstance(servers[slug], dict):
-        check_user_config(where, servers[slug], data["userConfig"], errors)
+    scanned = check_server(where, slug, servers[slug], errors)
+    if "userConfig" in data and scanned is not None:
+        check_user_config(where, *scanned, data["userConfig"], errors)
 
 
 def canonical(data: dict) -> str:
