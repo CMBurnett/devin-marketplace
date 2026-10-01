@@ -40,7 +40,8 @@ PLUGIN_KEYS = {
     "mcpServers",
     "userConfig",
 }
-USER_CONFIG_KEYS = {"key", "title", "description", "required", "sensitive"}
+USER_CONFIG_KEYS = {"key", "title", "description", "required", "sensitive", "options"}
+USER_CONFIG_OPTION_VALUE_RE = re.compile(r"^[A-Za-z0-9._~:-]{1,253}$")
 USER_CONFIG_KEY_RE = re.compile(r"^[a-z][a-z0-9_]*$")
 STDIO_KEYS = {"command", "args", "env"}
 HTTP_KEYS = {"url", "headers", "transport", "oauthClientId", "oauthScopes"}
@@ -212,6 +213,31 @@ def check_user_config(where: str, config: dict, items: object, errors: list[str]
             errors.append(f"{at}: sensitive must be set to true (a credential) or false (a readable setting)")
         elif not sensitive and name in from_headers:
             errors.append(f"{at}: ${{{name}}} is sent in a header, so it is a credential; sensitive must be true")
+        if "options" in item:
+            check_user_config_options(at, item["options"], sensitive, errors)
+
+
+def check_user_config_options(at: str, options: object, sensitive: object, errors: list[str]) -> None:
+    if sensitive is not False:
+        errors.append(f"{at}: options are only for readable settings (sensitive: false)")
+    if not isinstance(options, list) or not options:
+        errors.append(f"{at}: options must be a non-empty list")
+        return
+    values: set[str] = set()
+    for index, option in enumerate(options):
+        here = f"{at}.options[{index}]"
+        if not isinstance(option, dict) or set(option) != {"label", "value"}:
+            errors.append(f"{here} must be an object with exactly label and value")
+            continue
+        label, value = option["label"], option["value"]
+        if not isinstance(label, str) or not label:
+            errors.append(f"{here}: label must be a non-empty string")
+        if not isinstance(value, str) or not USER_CONFIG_OPTION_VALUE_RE.match(value):
+            errors.append(f"{here}: value may only contain letters, digits and . - _ ~ : (at most 253 characters)")
+            continue
+        if value in values:
+            errors.append(f"{here}: value '{value}' is listed twice")
+        values.add(value)
 
 
 def check_logo(where: str, slug: str, logo: object, errors: list[str]) -> None:
