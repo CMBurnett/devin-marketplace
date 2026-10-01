@@ -46,21 +46,6 @@
     "./plugins/circleback",
     "./plugins/circleci",
     "./plugins/clerk",
-    "./plugins/cloudflare-ai-gateway",
-    "./plugins/cloudflare-audit-logs",
-    "./plugins/cloudflare-autorag",
-    "./plugins/cloudflare-browser-rendering",
-    "./plugins/cloudflare-casb",
-    "./plugins/cloudflare-container",
-    "./plugins/cloudflare-dex",
-    "./plugins/cloudflare-dns-analytics",
-    "./plugins/cloudflare-docs",
-    "./plugins/cloudflare-graphql",
-    "./plugins/cloudflare-logpush",
-    "./plugins/cloudflare-observability",
-    "./plugins/cloudflare-radar",
-    "./plugins/cloudflare-workers-bindings",
-    "./plugins/cloudflare-workers-builds",
     "./plugins/cloudinary",
     "./plugins/cockroachdb",
     "./plugins/codspeed",
@@ -242,7 +227,7 @@
     {
       "source": "url",
       "url": "https://github.com/cloudflare/skills.git",
-      "sha": "626547c06881a20b3322bdc2ed6e6451b33a4fb6"
+      "sha": "41e0d19858946d18af9ee2c2feebbe2e11d829ff"
     },
     {
       "source": "git-subdir",
