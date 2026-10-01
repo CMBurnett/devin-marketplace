@@ -1,7 +1,7 @@
 {
   "name": "coralogix",
   "displayName": "Coralogix (OAuth)",
-  "description": "Query Coralogix logs, metrics, traces, and RUM, and manage alerts and dashboards via the official Coralogix MCP server. Pick your account's region in Server URL (EU1, EU2, US1, US2, US3, AP1, AP2 or AP3); it starts on US1.",
+  "description": "Query Coralogix logs, metrics, traces, and RUM, and manage alerts and dashboards via the official Coralogix MCP server. Pick your account's region (EU1, EU2, US1, US2, US3, AP1, AP2 or AP3) in the plugin's Settings; it starts on US1.",
   "homepage": "https://coralogix.com/",
   "logo": "logo.png",
   "keywords": [
@@ -9,41 +9,50 @@
   ],
   "mcpServers": {
     "coralogix": {
-      "url": "https://api.us1.coralogix.com/mgmt/api/v1/mcp",
-      "urlOptions": [
+      "url": "https://api.${CORALOGIX_DOMAIN:-us1.coralogix.com}/mgmt/api/v1/mcp"
+    }
+  },
+  "userConfig": [
+    {
+      "key": "coralogix_domain",
+      "title": "Region",
+      "description": "The Coralogix region your account is in.",
+      "required": true,
+      "sensitive": false,
+      "options": [
         {
           "label": "EU1 (Ireland)",
-          "url": "https://api.eu1.coralogix.com/mgmt/api/v1/mcp"
+          "value": "eu1.coralogix.com"
         },
         {
           "label": "EU2 (Stockholm)",
-          "url": "https://api.eu2.coralogix.com/mgmt/api/v1/mcp"
+          "value": "eu2.coralogix.com"
         },
         {
           "label": "US1 (Ohio)",
-          "url": "https://api.us1.coralogix.com/mgmt/api/v1/mcp"
+          "value": "us1.coralogix.com"
         },
         {
           "label": "US2 (Oregon)",
-          "url": "https://api.us2.coralogix.com/mgmt/api/v1/mcp"
+          "value": "us2.coralogix.com"
         },
         {
           "label": "US3 (Iowa)",
-          "url": "https://api.us3.coralogix.com/mgmt/api/v1/mcp"
+          "value": "us3.coralogix.com"
         },
         {
           "label": "AP1 (Mumbai)",
-          "url": "https://api.ap1.coralogix.com/mgmt/api/v1/mcp"
+          "value": "ap1.coralogix.com"
         },
         {
           "label": "AP2 (Singapore)",
-          "url": "https://api.ap2.coralogix.com/mgmt/api/v1/mcp"
+          "value": "ap2.coralogix.com"
         },
         {
           "label": "AP3 (Jakarta)",
-          "url": "https://api.ap3.coralogix.com/mgmt/api/v1/mcp"
+          "value": "ap3.coralogix.com"
         }
       ]
     }
-  }
+  ]
 }
