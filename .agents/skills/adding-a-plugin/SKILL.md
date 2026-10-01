@@ -27,6 +27,12 @@ this and CI runs it.
      reference its own key (`"AWS_PROFILE": "${AWS_PROFILE}"`) because a saved
      credential replaces the env entry with the same key; in `args` and
      `headers` the placeholder is the credential's only name.
+   * Optionally describe each placeholder in `userConfig`, a list of
+     `{"key", "title", "description", "required", "sensitive"}`. `key` is the
+     placeholder name in lowercase (`coralogix_domain` for
+     `${CORALOGIX_DOMAIN}`). `sensitive` is required: `true` for a
+     credential, `false` for a readable setting such as a region or tenant
+     domain. A placeholder sent in a header is always a credential.
 2. Add `"./plugins/<slug>"` to `optionalPlugins` in `.devin-plugin/plugin.json`.
 
 ## A third-party plugin
@@ -40,6 +46,24 @@ this and CI runs it.
    display metadata; the plugin's own manifest at that sha supplies it. If we
    host the same integration ourselves, author it under `plugins/` instead of
    pointing upstream.
+
+## Testing your plugin
+
+`validate.py` only checks the manifest's shape; before opening a PR, install
+the plugin from your checkout and have a session call one of its tools.
+
+* Locally: `devin plugins install --local ./plugins/<slug>`. The directory is
+  used in place, so edits apply on the next session. Export any `${<NAME>}`
+  credential the server needs, then start `devin` and use it.
+* In Devin Cloud, get it into **Customize → Plugins** at personal scope by any
+  of: **Add plugin → Upload .zip** with a zip of `plugins/<slug>`; **Add
+  plugin → From repository** with your fork and subdirectory `plugins/<slug>`
+  (installs the fork's default branch); or a session on your branch where you
+  ask Devin to install your plugin as a personal plugin (it uploads the
+  directory, you approve). Then start a new session and have Devin call a
+  tool: an MCP that needs OAuth prompts you to authorize it in chat; one that
+  needs a `${<NAME>}` credential has to be connected first from the plugin's
+  Connect button in Customize.
 
 ## Both
 
