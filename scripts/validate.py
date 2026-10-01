@@ -41,7 +41,7 @@ PLUGIN_KEYS = {
     "userConfig",
 }
 USER_CONFIG_KEYS = {"key", "title", "description", "required", "sensitive", "options"}
-USER_CONFIG_OPTION_VALUE_RE = re.compile(r"^[A-Za-z0-9._~:-]{1,253}$")
+USER_CONFIG_OPTION_VALUE_RE = re.compile(r"[A-Za-z0-9._~:-]{1,253}")
 USER_CONFIG_KEY_RE = re.compile(r"^[a-z][a-z0-9_]*$")
 STDIO_KEYS = {"command", "args", "env"}
 HTTP_KEYS = {"url", "urlOptions", "headers", "transport", "oauthClientId", "oauthScopes"}
@@ -261,7 +261,7 @@ def check_user_config_options(at: str, options: object, sensitive: object, error
         label, value = option["label"], option["value"]
         if not isinstance(label, str) or not label:
             errors.append(f"{here}: label must be a non-empty string")
-        if not isinstance(value, str) or not USER_CONFIG_OPTION_VALUE_RE.match(value):
+        if not isinstance(value, str) or not USER_CONFIG_OPTION_VALUE_RE.fullmatch(value):
             errors.append(f"{here}: value may only contain letters, digits and . - _ ~ : (at most 253 characters)")
             continue
         if value in values:
