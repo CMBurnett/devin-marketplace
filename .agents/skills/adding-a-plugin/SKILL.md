@@ -32,7 +32,10 @@ this and CI runs it.
      placeholder name in lowercase (`coralogix_domain` for
      `${CORALOGIX_DOMAIN}`). `sensitive` is required: `true` for a
      credential, `false` for a readable setting such as a region or tenant
-     domain. A placeholder sent in a header is always a credential.
+     domain. A placeholder sent in a header is always a credential. A
+     readable setting may list fixed choices, shown as a dropdown:
+     `"options": [{"label": "EU2 (Stockholm)", "value": "eu2.coralogix.com"}]`.
+     Values are URL-safe (`[A-Za-z0-9._~:-]`) and unique.
 2. Add `"./plugins/<slug>"` to `optionalPlugins` in `.devin-plugin/plugin.json`.
 
 ## A third-party plugin
